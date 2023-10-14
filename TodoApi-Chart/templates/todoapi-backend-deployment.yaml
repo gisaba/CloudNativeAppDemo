@@ -1,0 +1,66 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels:
+    app: {{ .Values.service.labelSelector }}
+    type: {{ .Values.labels.labelType }}
+  name: {{ .Values.service.labelSelector }}
+  namespace: {{ .Values.namespace }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ .Values.service.labelSelector }}
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: {{ .Values.service.labelSelector }}
+    spec:
+      securityContext:
+        runAsUser: {{ .Values.securityContext.runAsUser }}
+        runAsGroup: {{ .Values.securityContext.runAsGroup }}
+      imagePullSecrets:
+      - name: {{ .Values.imagePullSecrets.name }}
+      containers:
+      - image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
+        env:
+        - name: TZ
+          value: Europe/Rome
+        securityContext:
+          allowPrivilegeEscalation: {{ .Values.securityContext.allowPrivilegeEscalation }}
+          runAsNonRoot: {{ .Values.securityContext.runAsNonRoot }}
+        resources:
+          requests:
+            memory: {{ .Values.resources.requests.memory }}
+            cpu: {{ .Values.resources.requests.cpu }}
+          limits:
+            memory: {{ .Values.resources.limits.memory }}
+            cpu: {{ .Values.resources.limits.cpu }}
+        name: backend
+        imagePullPolicy: {{ .Values.image.pullPolicy }}
+        readinessProbe:
+         httpGet:
+          scheme: HTTP
+          path: /api/probe/isAlive
+          port: {{ .Values.container.containerPort }}
+         initialDelaySeconds: 15
+         periodSeconds: 10
+        livenessProbe:
+         httpGet:
+          scheme: HTTP
+          path: /api/probe/isAlive
+          port: {{ .Values.container.containerPort }}
+         initialDelaySeconds: 25
+         periodSeconds: 3
+        ports:
+        - containerPort: {{ .Values.container.containerPort }}
+          hostPort: {{ .Values.container.containerPort }}
+        volumeMounts:
+        - name: workdir
+          mountPath: "/logs"
+      volumes:
+      - name: workdir
+        emptyDir: {}
