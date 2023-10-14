@@ -1,4 +1,3 @@
-
 FROM mcr.microsoft.com/dotnet/aspnet:6.0 AS base
 
 ENV ASPNETCORE_URLS http://*:8080
