@@ -12,7 +12,7 @@ namespace TodoApi.Controllers
         [HttpGet("isAlive")]
         public IActionResult isAlive()
         {
-            return Ok("Todo API DEMO Version 1.0.0 Hostname:" + Dns.GetHostName());
+            return Ok("Todo API DEMO Version 1.1.0 - Hostname:" + Dns.GetHostName());
         }
     }
 }
