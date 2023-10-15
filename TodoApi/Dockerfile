@@ -21,8 +21,7 @@ WORKDIR "/src/TodoApi"
 RUN dotnet build "TodoApi.csproj" -c Release -o /app/build
 
 FROM build AS publish
-RUN dotnet publish "TodoApi.csproj" -c Release -o /app/publish 
-#/p:UseAppHost=false
+RUN dotnet publish "TodoApi.csproj" -c Release -o /app/publish /p:UseAppHost=false
 
 FROM base AS final
 WORKDIR /app
